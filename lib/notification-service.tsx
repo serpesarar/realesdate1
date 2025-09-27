@@ -1,4 +1,6 @@
 // Notification and Email Service
+import React from 'react'
+
 export interface EmailTemplate {
   subject: string
   htmlContent: string
