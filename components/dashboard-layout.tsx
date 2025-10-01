@@ -224,19 +224,55 @@ export function DashboardLayout({ children, userRole = "manager" }: DashboardLay
           </div>
 
           <div className={cn("p-4 border-b", currentRole === "owner" ? "border-gray-200/50" : "border-white/20")}>
-            <div
-              className={cn(
-                "w-full p-3 rounded-xl border shadow-lg",
-                currentRole === "owner" ? "border-gray-200/50 bg-slate-50/90" : "border-white/30 bg-slate-800/90",
-              )}
-            >
-              <div className="flex items-center gap-2">
-                <RoleIcon className={cn("w-4 h-4", currentRole === "owner" ? "text-slate-700" : "text-white")} />
-                <span className={cn("text-sm font-medium", currentRole === "owner" ? "text-slate-700" : "text-white")}>
-                  {roleLabels[currentRole]}
-                </span>
-              </div>
-            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <div
+                  className={cn(
+                    "w-full p-3 rounded-xl border shadow-lg cursor-pointer",
+                    currentRole === "owner" ? "border-gray-200/50 bg-slate-50/90" : "border-white/30 bg-slate-800/90",
+                  )}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="flex items-center gap-2">
+                    <RoleIcon className={cn("w-4 h-4", currentRole === "owner" ? "text-slate-700" : "text-white")} />
+                    <span className={cn("text-sm font-medium", currentRole === "owner" ? "text-slate-700" : "text-white")}>
+                      {roleLabels[currentRole]}
+                    </span>
+                  </div>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48 rounded-xl shadow-lg bg-white/95">
+                <DropdownMenuLabel>Switch Role Panel</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {Object.entries(roleLabels).map(([role, label]) => {
+                  const Icon = roleIcons[role as keyof typeof roleIcons]
+                  const isCurrentRole = role === currentRole
+                  return (
+                    <DropdownMenuItem
+                      key={role}
+                      className={cn("gap-2 cursor-pointer rounded-lg", isCurrentRole && "bg-blue-50")}
+                      onClick={() => {
+                        if (!isCurrentRole) {
+                          const defaultRoutes = {
+                            owner: "/dashboard/owner",
+                            manager: "/dashboard",
+                            tenant: "/dashboard/tenant",
+                            handyman: "/dashboard/handyman",
+                            accountant: "/dashboard/accountant",
+                          }
+                          router.push(defaultRoutes[role as keyof typeof defaultRoutes])
+                        }
+                      }}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{label}</span>
+                      {isCurrentRole && <div className="ml-auto w-2 h-2 bg-blue-500 rounded-full" />}
+                    </DropdownMenuItem>
+                  )
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
 
           <nav className="flex-1 space-y-1 p-4 overflow-y-auto">
